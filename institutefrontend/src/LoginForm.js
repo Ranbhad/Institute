@@ -17,15 +17,13 @@ const LoginForm = ({ onLogin, onToggleForm }) => {
         email: email,
         password: password,
       }, {
-        withCredentials: true,  // Move these options here
+        withCredentials: true,
         crossDomain: true,
       });
   
       if (response.status === 200) {
         setMessage('Login successful');
         setUserType(response.data.userType);
-  
-        // Redirect to the appropriate dashboard based on userType
         onLogin(email, response.data.userType);
       } else {
         setMessage('User not found. Please check your credentials.');
@@ -40,16 +38,14 @@ const LoginForm = ({ onLogin, onToggleForm }) => {
 
   const styles = {
     container: {
-      textAlign: 'center',
-      maxWidth: '400px',
-      margin: 'auto',
-      marginTop: '100px',
-      padding: '20px',
-      marginLeft: '450px',
-      boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
-      borderRadius: '3px',
-      backgroundColor: 'White'
-    },
+        textAlign: 'center',
+        maxWidth: '400px',
+        margin: '100px auto',
+        padding: '20px',
+        boxShadow: '0 0 10px rgba(0, 0, 0, 0.1)',
+        borderRadius: '3px',
+        backgroundColor: 'White'
+      },
     heading: {
       fontSize: '28px',
       marginBottom: '20px',

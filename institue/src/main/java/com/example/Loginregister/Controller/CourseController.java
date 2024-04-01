@@ -1,5 +1,6 @@
 package com.example.Loginregister.Controller;
 
+import com.example.Loginregister.Model.Faculty;
 import com.example.Loginregister.Repositries.CourseRepository;
 import com.example.Loginregister.Services.CourseService;
 import com.example.Loginregister.Model.Admin;
@@ -78,5 +79,8 @@ public class CourseController {
             return ResponseEntity.notFound().build();
         }
     }
-
+    @GetMapping("/getFaculty")
+    public List<Faculty> getAllFaculty() {
+        return courseService.getAllFaculty();
+    }
 }

@@ -1,7 +1,9 @@
 package com.example.Loginregister.Controller;
 import com.example.Loginregister.Model.Admin;
+import com.example.Loginregister.Model.Faculty;
 import com.example.Loginregister.Model.User;
 import com.example.Loginregister.Repositries.AdminRepository;
+import com.example.Loginregister.Repositries.FacultyRepository;
 import com.example.Loginregister.Repositries.UserRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +23,12 @@ public class AdminController {
 
     private final AdminRepository adminRepository;
     private final UserRepository userRepository;
+    private final FacultyRepository facultyRepository;
 
-    public AdminController(AdminRepository adminRepository, UserRepository userRepository) {
+    public AdminController(AdminRepository adminRepository, UserRepository userRepository, FacultyRepository facultyRepository) {
         this.adminRepository = adminRepository;
         this.userRepository = userRepository;
+        this.facultyRepository = facultyRepository;
     }
 
     @PostMapping("/register/user")
@@ -40,7 +44,18 @@ public class AdminController {
         }
     }
 
+    @PostMapping("/register/faculty")
+    public ResponseEntity<String> registerFaculty(@RequestBody Faculty faculty) {
+        try {
+            facultyRepository.save(faculty);
 
+            logger.info("Faculty registration successful for UserType: {}", faculty.getUserType());
+            return ResponseEntity.ok("Registration successful");
+        } catch (Exception e) {
+            logger.error("Faculty registration failed for email: {}. Reason: {}", faculty.getEmail(), e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Registration failed");
+        }
+    }
     @PostMapping("/register/admin")
     public ResponseEntity<String> registerAdmin(@RequestBody Admin admin) {
         // Admin registration logic
@@ -48,12 +63,8 @@ public class AdminController {
         logger.info("Admin registration successful");
         return ResponseEntity.ok("Admin registration successful");
     }
-
-    // Other methods...
-
     @GetMapping("/getAdmin")
     public ResponseEntity<String> getAdmin(@RequestParam String instituteKey) {
-        // Check if the admin exists for the given instituteKey
         if (adminRepository.existsByInstituteKey(instituteKey)) {
             logger.info("Admin exists for instituteKey: {}", instituteKey);
             return ResponseEntity.ok("Admin exists");
@@ -71,10 +82,9 @@ public class AdminController {
         logger.info("Received login request for email: {}", email);
 
         if (email != null && password != null) {
-            // Check both User and Registration entities for a matching email
             User existingUser = userRepository.findByEmail(email);
             Admin existingRegistration = adminRepository.findByEmail(email);
-
+            Faculty existingFaculty = facultyRepository.findByEmail(email);
             if (existingUser != null && existingUser.getPassword().equals(password)) {
                 Map<String, String> response = new HashMap<>();
                 response.put("message", "Login successful");
@@ -82,29 +92,27 @@ public class AdminController {
                 logger.info("Login successful for email: {}", email);
                 return ResponseEntity.ok(response);
             } else if (existingRegistration != null && existingRegistration.getPassword().equals(password)) {
-                Map<String, String> response = new HashMap<>();
+                Map<String, String> response = new HashMap<>( );
                 response.put("message", "Login successful");
-                response.put("userType", existingRegistration.getUserType());
+                response.put("userType", existingRegistration.getUserType( ));
                 logger.info("Login successful for email: {}", email);
                 return ResponseEntity.ok(response);
+            } else if (existingFaculty != null && existingFaculty.getPassword().equals(password)) {
+                    Map<String, String> response = new HashMap<>();
+                    response.put("message", "Login successful");
+                    response.put("userType", "faculty");
+                    logger.info("Login successful for email: {}", email);
+                    return ResponseEntity.ok(response);
             } else {
-                // Log a warning for login failure
                 logger.warn("Login failed for email: {}", email);
             }
         } else {
-            // Log a warning for invalid login request
             logger.warn("Invalid login request. Email or password is null.");
         }
-
-        // Log a warning for general login failure
         logger.warn("Login failed for email: {}", email);
-
-        // Prepare response for unsuccessful login
         Map<String, String> response = new HashMap<>();
         response.put("message", "Login failed");
         response.put("userType", "null");
-
-        // Return unauthorized status
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
     }
     @GetMapping("/api/admin")
@@ -144,5 +152,6 @@ public class AdminController {
 //        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
 //    }
 //}
+
 }
 

@@ -1,6 +1,7 @@
 package com.example.Loginregister.Model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.persistence.Id;
@@ -20,10 +21,10 @@ public class Course {
     private String batch;
     private String instituteKey;
     private int availableSeats;
-    private Date startDate;
-    private Date endDate;
     private String courseId;
     private String strengthOfStudents;
+    @Getter
+    private String facultyName;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -34,7 +35,7 @@ public class Course {
         this.courseId = UUID.randomUUID().toString();
     }
 
-    public Course(String id, String name, String fees, String duration, String batch, String strengthOfStudents, String instituteKey) {
+    public Course( String facultyName, String id, String name, String fees, String duration, String batch, String strengthOfStudents, String instituteKey) {
         this.id = id;
         this.name = name;
         this.fees = fees;
@@ -43,6 +44,7 @@ public class Course {
         this.strengthOfStudents = strengthOfStudents;
         this.instituteKey = instituteKey;
         this.courseId = UUID.randomUUID().toString();
+        this.facultyName = facultyName;
     }
 
     public String getId() {
@@ -101,22 +103,6 @@ public class Course {
         this.availableSeats = availableSeats;
     }
 
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
     public String getCourseId() {
         return courseId;
     }
@@ -127,6 +113,10 @@ public class Course {
 
     public String getStrengthOfStudents() {
         return strengthOfStudents;
+    }
+
+    public void setFacultyName(String facultyName) {
+        this.facultyName = facultyName;
     }
 
     public void setStrengthOfStudents(String strengthOfStudents) {

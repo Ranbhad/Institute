@@ -1,7 +1,9 @@
 package com.example.Loginregister.Services;
 
+import com.example.Loginregister.Model.Faculty;
 import com.example.Loginregister.Repositries.CourseRepository;
 import com.example.Loginregister.Model.Course;
+import com.example.Loginregister.Repositries.FacultyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,9 +15,12 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
 
+    private final FacultyRepository facultyRepository;
+
     @Autowired
-    public CourseService(CourseRepository courseRepository) {
+    public CourseService(CourseRepository courseRepository, FacultyRepository facultyRepository) {
         this.courseRepository = courseRepository;
+        this.facultyRepository = facultyRepository;
     }
 
     public Course addCourse(Course course) {
@@ -60,12 +65,15 @@ public class CourseService {
             existingCourse.setAvailableSeats(updatedCourse.getAvailableSeats());
             existingCourse.setCourseId(updatedCourse.getCourseId());
             existingCourse.setInstituteKey(updatedCourse.getInstituteKey());
-            existingCourse.setStartDate(updatedCourse.getStartDate());
-            existingCourse.setEndDate(updatedCourse.getEndDate());
             existingCourse.setBatch(updatedCourse.getBatch());
+            existingCourse.setFacultyName(updatedCourse.getFacultyName());
             return courseRepository.save(existingCourse);
         } else {
             return null;
         }
+    }
+
+    public List<Faculty> getAllFaculty() {
+        return facultyRepository.findAll();
     }
 }
